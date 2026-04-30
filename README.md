@@ -16,6 +16,8 @@ backend/
 
 Both backends use the same REST API contract and the same local PostgreSQL database.
 
+For the rationale behind the multi-backend structure, see [docs/architecture.md](docs/architecture.md).
+
 ## Local Ports
 
 ```text
