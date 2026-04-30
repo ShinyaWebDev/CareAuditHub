@@ -21,6 +21,10 @@ export const reportsMock: ReportsResponse = {
         { name: 'Attachment metadata', status: 'Passed', detail: 'All PDF evidence has owner, timestamp, and retention label.' },
       ],
       warnings: ['Two clinical incident records are awaiting reviewer attestation.', 'Medication variance trend note is present but not yet approved.'],
+      evidenceItems: [
+        { name: 'Clinical governance evidence bundle', source: 'Care Plan UI', attachedAt: '28 Apr 2026 09:21' },
+        { name: 'Government API schema preview', source: 'Validation Engine', attachedAt: '28 Apr 2026 08:18' },
+      ],
       auditEvents: [
         { time: '09:42 today', title: 'Evidence return marked ready for review', actor: 'Avery McKenna', color: 'warning' },
         { time: '08:18 today', title: 'Government API schema check completed', actor: 'System', color: 'success' },
@@ -46,6 +50,10 @@ export const reportsMock: ReportsResponse = {
         { name: 'Submission payload schema', status: 'Blocking', detail: 'Validation failed against medication incident payload schema.' },
       ],
       warnings: ['Three severity codes must be mapped before submission.', 'One chart attachment needs source-system reference.'],
+      evidenceItems: [
+        { name: 'Medication variance export', source: 'MediTrack', attachedAt: '28 Apr 2026 08:43' },
+        { name: 'Medication chart attachments', source: 'Pharmacy Upload', attachedAt: '27 Apr 2026 16:35' },
+      ],
       auditEvents: [
         { time: '08:51 today', title: 'Validation failed', actor: 'System', color: 'error' },
         { time: '08:43 today', title: 'Medication source data refreshed', actor: 'MediTrack API', color: 'info' },
@@ -71,6 +79,10 @@ export const reportsMock: ReportsResponse = {
         { name: 'Government receipt', status: 'Passed', detail: 'Submission receipt GOV-847193 stored.' },
       ],
       warnings: [],
+      evidenceItems: [
+        { name: 'Staff credential summary', source: 'WorkforceOne', attachedAt: '26 Apr 2026 13:20' },
+        { name: 'Government receipt GOV-847193', source: 'Government API', attachedAt: '26 Apr 2026 15:20' },
+      ],
       auditEvents: [
         { time: '26 Apr', title: 'Report submitted successfully', actor: 'Mina Chen', color: 'success' },
         { time: '26 Apr', title: 'Government receipt stored', actor: 'System', color: 'success' },
@@ -95,6 +107,9 @@ export const reportsMock: ReportsResponse = {
         { name: 'Audit ownership', status: 'Passed', detail: 'Owner and reviewer workflow has been assigned.' },
       ],
       warnings: ['Five consent attachments are awaiting review.', 'Two residents do not yet have exception rationale notes.'],
+      evidenceItems: [
+        { name: 'Consent exception register', source: 'Admissions', attachedAt: '27 Apr 2026 15:44' },
+      ],
       auditEvents: [
         { time: '27 Apr', title: 'Draft report created', actor: 'Helen Zhao', color: 'info' },
         { time: '27 Apr', title: 'Admissions data imported', actor: 'System', color: 'success' },
@@ -119,6 +134,9 @@ export const reportsMock: ReportsResponse = {
         { name: 'Overdue escalation', status: 'Blocking', detail: 'Report is overdue and requires governance acknowledgement.' },
       ],
       warnings: ['Report is overdue by one day.', 'Two wound charts are missing required staging fields.'],
+      evidenceItems: [
+        { name: 'Wound monitoring summary', source: 'Clinical Governance', attachedAt: '28 Apr 2026 07:30' },
+      ],
       auditEvents: [
         { time: '07:30 today', title: 'Overdue escalation raised', actor: 'System', color: 'error' },
         { time: '27 Apr', title: 'RN attestation captured', actor: 'Amara Reed', color: 'success' },
@@ -143,6 +161,10 @@ export const reportsMock: ReportsResponse = {
         { name: 'API payload preview', status: 'Passed', detail: 'Payload can be generated for government submission channel.' },
       ],
       warnings: [],
+      evidenceItems: [
+        { name: 'Incident trend summary', source: 'RiskBase', attachedAt: '28 Apr 2026 09:50' },
+        { name: 'Reviewer sign-off record', source: 'Clinical Governance', attachedAt: '28 Apr 2026 09:54' },
+      ],
       auditEvents: [
         { time: '10:12 today', title: 'Validation passed', actor: 'System', color: 'success' },
         { time: '09:54 today', title: 'Reviewer sign-off captured', actor: 'Daniel Brooks', color: 'success' },

@@ -5,7 +5,14 @@
     title="Reports"
   >
     <template #actions>
-      <v-btn color="primary" prepend-icon="mdi-plus">New Report</v-btn>
+      <v-btn
+        v-if="auth.canCreateReports"
+        color="primary"
+        prepend-icon="mdi-plus"
+        @click="createDialogOpen = true"
+      >
+        New Report
+      </v-btn>
       <v-btn prepend-icon="mdi-shield-sync-outline" variant="outlined">Sync Obligations</v-btn>
     </template>
   </PageHeader>
@@ -217,6 +224,31 @@
         </v-row>
 
         <v-row>
+          <v-col cols="12">
+            <v-card class="dashboard-card" elevation="0">
+              <v-card-title class="section-title">Attached Evidence</v-card-title>
+              <v-card-text>
+                <div v-if="selectedReport.evidenceItems.length" class="grid gap-3 md:grid-cols-2">
+                  <div
+                    v-for="item in selectedReport.evidenceItems"
+                    :key="item.name + item.source"
+                    class="rounded-lg border border-solid border-[rgba(var(--v-theme-outline-variant),0.7)] p-3"
+                  >
+                    <div class="font-semibold">{{ item.name }}</div>
+                    <div class="mt-1 text-sm text-medium-emphasis">
+                      {{ item.source }} · {{ item.attachedAt }}
+                    </div>
+                  </div>
+                </div>
+                <v-alert v-else color="warning" density="compact" icon="mdi-paperclip" variant="tonal">
+                  No evidence has been attached to this report yet.
+                </v-alert>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <v-row>
           <v-col cols="12" md="6">
             <v-card class="dashboard-card h-full" elevation="0">
               <v-card-title class="section-title">Missing Data Warnings</v-card-title>
@@ -279,6 +311,65 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <v-dialog v-model="createDialogOpen" max-width="760">
+    <v-card class="dashboard-card" elevation="0">
+      <v-card-title class="pa-5">
+        <div>
+          <div class="text-xs font-medium uppercase tracking-wide text-medium-emphasis">
+            Create report
+          </div>
+          <h2 class="mt-1 text-xl font-bold">Draft compliance report</h2>
+        </div>
+      </v-card-title>
+      <v-divider />
+      <v-card-text class="pa-5">
+        <v-alert
+          v-if="createError"
+          class="mb-4"
+          color="error"
+          density="compact"
+          variant="tonal"
+        >
+          {{ createError }}
+        </v-alert>
+
+        <v-form class="grid gap-3" @submit.prevent="createReport">
+          <v-text-field v-model="createForm.name" label="Report name" variant="outlined" />
+          <div class="grid gap-3 md:grid-cols-2">
+            <v-text-field v-model="createForm.reportingPeriod" label="Reporting period" variant="outlined" />
+            <v-text-field v-model="createForm.facility" label="Facility" variant="outlined" />
+          </div>
+          <div class="grid gap-3 md:grid-cols-2">
+            <v-text-field v-model="createForm.dueDate" label="Due date" type="date" variant="outlined" />
+            <v-text-field v-model="createForm.owner" label="Owner" variant="outlined" />
+          </div>
+          <v-textarea
+            v-model="createForm.evidenceText"
+            auto-grow
+            hint="One item per line, e.g. Medication variance export | MediTrack"
+            label="Attached evidence"
+            persistent-hint
+            rows="4"
+            variant="outlined"
+          />
+        </v-form>
+      </v-card-text>
+      <v-divider />
+      <v-card-actions class="pa-5">
+        <v-btn variant="text" @click="createDialogOpen = false">Cancel</v-btn>
+        <v-spacer />
+        <v-btn
+          color="primary"
+          :loading="creatingReport"
+          prepend-icon="mdi-file-plus-outline"
+          @click="createReport"
+        >
+          Create Draft
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -296,6 +387,17 @@ const loadError = ref('')
 const validatingId = ref('')
 const selectedReport = ref<ComplianceReport | null>(null)
 const reports = ref<ComplianceReport[]>(reportsMock.reports)
+const createDialogOpen = ref(false)
+const creatingReport = ref(false)
+const createError = ref('')
+const createForm = ref({
+  name: 'Restrictive Practice Evidence Review',
+  reportingPeriod: 'May 2026',
+  facility: 'Harbourview Aged Care',
+  dueDate: '2026-05-15',
+  owner: 'CareHub Admin',
+  evidenceText: 'Restrictive practice approval | Clinical Governance\nBehaviour support review | Care Plan UI',
+})
 
 const statuses: Array<{
   status: ReportStatus
@@ -382,6 +484,46 @@ async function runValidation (report: ComplianceReport) {
     loadError.value = error instanceof Error ? error.message : 'Unable to validate report.'
   } finally {
     validatingId.value = ''
+  }
+}
+
+function parseEvidenceItems () {
+  return createForm.value.evidenceText
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
+    .map(line => {
+      const [name, source] = line.split('|').map(part => part.trim())
+
+      return {
+        name,
+        source: source || 'Manual upload',
+      }
+    })
+    .filter(item => item.name)
+}
+
+async function createReport () {
+  creatingReport.value = true
+  createError.value = ''
+
+  try {
+    const result = await reportApi.createReport({
+      name: createForm.value.name,
+      reportingPeriod: createForm.value.reportingPeriod,
+      facility: createForm.value.facility,
+      dueDate: createForm.value.dueDate,
+      owner: createForm.value.owner,
+      evidenceItems: parseEvidenceItems(),
+    })
+
+    reports.value = [result.report, ...reports.value]
+    selectedReport.value = result.report
+    createDialogOpen.value = false
+  } catch (error) {
+    createError.value = error instanceof Error ? error.message : 'Unable to create report.'
+  } finally {
+    creatingReport.value = false
   }
 }
 

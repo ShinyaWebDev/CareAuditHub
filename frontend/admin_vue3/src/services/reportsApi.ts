@@ -1,5 +1,5 @@
 import { reportsMock } from '@/mocks/reportsMock'
-import type { ComplianceReport, ReportsResponse, ValidateReportResponse } from '@/types/report'
+import type { ComplianceReport, CreateReportRequest, CreateReportResponse, ReportsResponse, ValidateReportResponse } from '@/types/report'
 import { httpClient } from './httpClient'
 
 export const reportApi = {
@@ -17,6 +17,10 @@ export const reportApi = {
 
   async getReport(id: string): Promise<ComplianceReport> {
     return httpClient.get<ComplianceReport>(`/reports/${encodeURIComponent(id)}`)
+  },
+
+  async createReport(input: CreateReportRequest): Promise<CreateReportResponse> {
+    return httpClient.post<CreateReportResponse, CreateReportRequest>('/reports', input)
   },
 
   async validateReport(id: string): Promise<ValidateReportResponse> {

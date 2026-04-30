@@ -83,6 +83,12 @@ functions:
       - httpApi:
           method: GET
           path: /reports
+  reportCreate:
+    handler: src/handlers/reports.createNewReport
+    events:
+      - httpApi:
+          method: POST
+          path: /reports
   reportById:
     handler: src/handlers/reports.getReport
     events:

@@ -25,6 +25,7 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     role: state => state.user?.role,
     isAuthenticated: state => Boolean(state.token && state.user),
+    canCreateReports: state => state.user?.role === 'Admin' || state.user?.role === 'ComplianceManager',
     canValidateReports: state => state.user?.role === 'Admin' || state.user?.role === 'ComplianceManager',
     canRetrySync: state => state.user?.role === 'Admin',
   },

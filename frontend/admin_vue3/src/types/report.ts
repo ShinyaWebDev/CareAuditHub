@@ -15,6 +15,12 @@ export interface ReportAuditEvent {
   color: string
 }
 
+export interface ReportEvidenceItem {
+  name: string
+  source: string
+  attachedAt: string
+}
+
 export interface ComplianceReport {
   id: string
   name: string
@@ -30,6 +36,7 @@ export interface ComplianceReport {
   validationChecks: ValidationCheck[]
   warnings: string[]
   auditEvents: ReportAuditEvent[]
+  evidenceItems: ReportEvidenceItem[]
 }
 
 export interface ReportsResponse {
@@ -51,4 +58,20 @@ export interface ValidateReportResponse {
     warningChecks: number
     canSubmit: boolean
   }
+}
+
+export interface CreateReportRequest {
+  name: string
+  reportingPeriod: string
+  facility: string
+  dueDate: string
+  owner: string
+  evidenceItems: Array<{
+    name: string
+    source: string
+  }>
+}
+
+export interface CreateReportResponse {
+  report: ComplianceReport
 }
