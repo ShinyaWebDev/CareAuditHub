@@ -117,6 +117,7 @@
               View Details
             </v-btn>
             <v-btn
+              v-if="auth.canValidateReports"
               :loading="validatingId === report.id"
               size="small"
               variant="text"
@@ -265,6 +266,7 @@
       <v-card-actions class="pa-5">
         <v-btn prepend-icon="mdi-file-delimited-outline" variant="outlined">Export CSV</v-btn>
         <v-btn
+          v-if="auth.canValidateReports"
           :loading="validatingId === selectedReport.id"
           prepend-icon="mdi-shield-sync-outline"
           variant="outlined"
@@ -285,8 +287,10 @@ import PageHeader from '@/components/PageHeader.vue'
 import StatusChip from '@/components/StatusChip.vue'
 import { reportsMock } from '@/mocks/reportsMock'
 import { reportApi } from '@/services/reportsApi'
+import { useAuthStore } from '@/stores/auth'
 import type { ComplianceReport, ReportStatus } from '@/types/report'
 
+const auth = useAuthStore()
 const loading = ref(false)
 const loadError = ref('')
 const validatingId = ref('')

@@ -75,19 +75,28 @@
     >
       Connected to: {{ backendModeLabel }}
     </v-chip>
+    <v-chip
+      class="mr-2 hidden md:inline-flex"
+      color="primary"
+      label
+      size="small"
+      variant="tonal"
+    >
+      {{ auth.user?.role }}
+    </v-chip>
     <v-btn class="mr-1" icon="mdi-bell-outline" variant="text" />
     <v-menu>
       <template #activator="{ props }">
         <v-btn v-bind="props" class="mr-2" variant="text">
           <v-avatar color="primary" size="32">
-            <span class="text-xs font-bold">{{ app.user.initials }}</span>
+            <span class="text-xs font-bold">{{ userInitials }}</span>
           </v-avatar>
-          <span class="ml-2 hidden text-sm font-medium md:inline">{{ app.user.name }}</span>
+          <span class="ml-2 hidden text-sm font-medium md:inline">{{ auth.user?.name }}</span>
           <v-icon class="ml-1 hidden md:inline-flex" icon="mdi-chevron-down" size="18" />
         </v-btn>
       </template>
       <v-list density="compact" min-width="220">
-        <v-list-item :subtitle="app.user.role" :title="app.user.name" />
+        <v-list-item :subtitle="auth.user?.role" :title="auth.user?.name" />
         <v-divider />
         <v-list-item prepend-icon="mdi-cog-outline" title="Settings" to="/settings" />
         <v-list-item prepend-icon="mdi-logout" title="Sign out" @click="logout" />
@@ -107,9 +116,11 @@ import { computed, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 import { backendModeLabel } from '@/config/api'
 
 const app = useAppStore()
+const auth = useAuthStore()
 const route = useRoute()
 const router = useRouter()
 const display = useDisplay()
@@ -133,8 +144,17 @@ const pageTitle = computed(() => {
   return match?.title ?? 'Dashboard'
 })
 
+const userInitials = computed(() =>
+  auth.user?.name
+    .split(' ')
+    .map(part => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase() ?? 'U',
+)
+
 function logout () {
-  app.logout()
+  auth.logout()
   router.push('/login')
 }
 

@@ -8,7 +8,9 @@ import {
   dashboardMetrics,
   reports,
   residents,
+  users,
 } from './schema'
+import { createPasswordHash } from '../utils/password'
 
 const now = new Date()
 
@@ -19,6 +21,38 @@ async function seed() {
   await db.delete(reports)
   await db.delete(residents)
   await db.delete(dashboardMetrics)
+  await db.delete(users)
+
+  await db.insert(users).values([
+    {
+      id: 'USR-ADMIN',
+      name: 'CareHub Admin',
+      email: 'admin@carehub.test',
+      passwordHash: createPasswordHash('password123', 'admin@carehub.test'),
+      role: 'Admin',
+    },
+    {
+      id: 'USR-MANAGER',
+      name: 'Compliance Manager',
+      email: 'manager@carehub.test',
+      passwordHash: createPasswordHash('password123', 'manager@carehub.test'),
+      role: 'ComplianceManager',
+    },
+    {
+      id: 'USR-VIEWER',
+      name: 'CareHub Viewer',
+      email: 'viewer@carehub.test',
+      passwordHash: createPasswordHash('password123', 'viewer@carehub.test'),
+      role: 'Viewer',
+    },
+    {
+      id: 'USR-AUDITOR',
+      name: 'CareHub Auditor',
+      email: 'auditor@carehub.test',
+      passwordHash: createPasswordHash('password123', 'auditor@carehub.test'),
+      role: 'Auditor',
+    },
+  ])
 
   await db.insert(residents).values([
     {

@@ -58,7 +58,7 @@
           <v-btn color="primary" variant="text">View Payloads</v-btn>
           <v-spacer />
           <v-btn
-            v-if="connection.status === 'Degraded'"
+            v-if="auth.canRetrySync && connection.status === 'Degraded'"
             color="warning"
             :loading="retryingId === connection.id"
             size="small"
@@ -85,8 +85,10 @@ import PageHeader from '@/components/PageHeader.vue'
 import StatusChip from '@/components/StatusChip.vue'
 import { apiSyncApi } from '@/services/apiSyncApi'
 import { apiSyncMock } from '@/mocks/apiSyncMock'
+import { useAuthStore } from '@/stores/auth'
 import type { ApiConnection } from '@/types/apiSync'
 
+const auth = useAuthStore()
 const loading = ref(false)
 const loadError = ref('')
 const retryingId = ref('')

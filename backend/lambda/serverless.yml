@@ -47,6 +47,18 @@ custom:
     reloadHandler: true
 
 functions:
+  authLogin:
+    handler: src/handlers/auth.loginUser
+    events:
+      - httpApi:
+          method: POST
+          path: /auth/login
+  authMe:
+    handler: src/handlers/auth.getCurrentUser
+    events:
+      - httpApi:
+          method: GET
+          path: /auth/me
   dashboard:
     handler: src/handlers/dashboard.getDashboard
     events:

@@ -6,7 +6,7 @@
 
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -65,13 +65,13 @@ const router = createRouter({
 })
 
 router.beforeEach(to => {
-  const app = useAppStore()
+  const auth = useAuthStore()
 
-  if (!to.meta.public && !app.authenticated) {
+  if (!to.meta.public && !auth.isAuthenticated) {
     return '/login'
   }
 
-  if (to.meta.public && app.authenticated) {
+  if (to.meta.public && auth.isAuthenticated) {
     return '/dashboard'
   }
 

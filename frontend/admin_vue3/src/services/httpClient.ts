@@ -1,4 +1,5 @@
 import { apiConfig, isApiConfigured } from '@/config/api'
+import { AUTH_TOKEN_STORAGE_KEY } from './authStorage'
 
 export class HttpClientError extends Error {
   constructor(
@@ -17,10 +18,10 @@ type RequestOptions = {
 }
 
 async function getAuthHeaders(): Promise<HeadersInit> {
-  if (apiConfig.authMode === 'none') return {}
+  const token = localStorage.getItem(AUTH_TOKEN_STORAGE_KEY)
 
-  // Future hook: read Cognito/JWT token from an auth store and inject it here.
-  return {}
+  // Demo-only bearer token. Production should inject Cognito JWTs or a secure session token here.
+  return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
 async function request<T>(path: string, init: RequestInit = {}, options: RequestOptions = {}): Promise<T> {

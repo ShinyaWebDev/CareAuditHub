@@ -17,6 +17,7 @@ export type CheckStatus = 'Passed' | 'Warning' | 'Blocking'
 export type AuditSeverity = 'Info' | 'Low' | 'Medium' | 'High' | 'Critical'
 export type AuditEventType = 'Assessment' | 'Validation' | 'API Submission' | 'Document' | 'Access' | 'System'
 export type SyncStatus = 'Connected' | 'Degraded' | 'Paused'
+export type UserRole = 'Admin' | 'ComplianceManager' | 'Viewer' | 'Auditor'
 
 export interface DocumentationItem {
   name: string
@@ -42,6 +43,12 @@ export interface ReportAuditEvent {
   title: string
   actor: string
   color: string
+}
+
+export interface ReportEvidenceItem {
+  name: string
+  source: string
+  attachedAt: string
 }
 
 export interface SyncHistoryEvent {
@@ -73,6 +80,16 @@ export const residents = pgTable('residents', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
+export const users = pgTable('users', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  passwordHash: text('password_hash').notNull(),
+  role: text('role').$type<UserRole>().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
 export const reports = pgTable('reports', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -89,6 +106,7 @@ export const reports = pgTable('reports', {
   validationChecks: jsonb('validation_checks').$type<ValidationCheck[]>().notNull().default([]),
   warnings: jsonb('warnings').$type<string[]>().notNull().default([]),
   auditEvents: jsonb('audit_events').$type<ReportAuditEvent[]>().notNull().default([]),
+  evidenceItems: jsonb('evidence_items').$type<ReportEvidenceItem[]>().notNull().default([]),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })
@@ -153,6 +171,7 @@ export const dashboardMetrics = pgTable('dashboard_metrics', {
 })
 
 export type Resident = typeof residents.$inferSelect
+export type User = typeof users.$inferSelect
 export type Report = typeof reports.$inferSelect
 export type AuditLog = typeof auditLogs.$inferSelect
 export type ApiSyncConnection = typeof apiSyncConnections.$inferSelect

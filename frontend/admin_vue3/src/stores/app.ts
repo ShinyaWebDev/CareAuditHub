@@ -3,7 +3,6 @@ import { defineStore } from 'pinia'
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    authenticated: false,
     user: {
       name: 'Avery McKenna',
       role: 'Compliance Lead',
@@ -14,12 +13,6 @@ export const useAppStore = defineStore('app', {
     drawer: true,
   }),
   actions: {
-    login () {
-      this.authenticated = true
-    },
-    logout () {
-      this.authenticated = false
-    },
     setDrawer (value: boolean) {
       this.drawer = value
     },

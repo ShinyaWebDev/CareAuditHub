@@ -69,6 +69,15 @@
                 type="password"
                 variant="outlined"
               />
+              <v-alert
+                v-if="loginError"
+                class="mb-4"
+                color="error"
+                density="compact"
+                variant="tonal"
+              >
+                {{ loginError }}
+              </v-alert>
               <div class="mb-5 flex items-center justify-between">
                 <v-checkbox
                   v-model="remember"
@@ -79,7 +88,7 @@
                 />
                 <v-btn color="primary" size="small" variant="text">Reset</v-btn>
               </div>
-              <v-btn block color="primary" size="large" type="submit">
+              <v-btn block color="primary" :loading="submitting" size="large" type="submit">
                 Enter Dashboard
               </v-btn>
             </v-form>
@@ -93,14 +102,16 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
-const app = useAppStore()
+const auth = useAuthStore()
 
-const email = ref('avery.mckenna@harbourview.example')
-const password = ref('compliance-demo')
+const email = ref('admin@carehub.test')
+const password = ref('password123')
 const remember = ref(true)
+const submitting = ref(false)
+const loginError = ref('')
 
 const highlights = [
   { label: 'Evidence ready', value: '86%' },
@@ -108,8 +119,17 @@ const highlights = [
   { label: 'Live sources', value: '4' },
 ]
 
-function submit () {
-  app.login()
-  router.push('/dashboard')
+async function submit () {
+  submitting.value = true
+  loginError.value = ''
+
+  try {
+    await auth.login(email.value, password.value)
+    router.push('/dashboard')
+  } catch (error) {
+    loginError.value = error instanceof Error ? error.message : 'Unable to sign in.'
+  } finally {
+    submitting.value = false
+  }
 }
 </script>

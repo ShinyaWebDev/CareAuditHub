@@ -16,24 +16,6 @@ export const apiSyncApi = {
   },
 
   async retryConnection(id: string): Promise<RetryApiSyncResponse> {
-    try {
-      return await httpClient.post<RetryApiSyncResponse>(`/api-sync/${encodeURIComponent(id)}/retry`)
-    } catch {
-      const connection = apiSyncMock.apiConnections.find(item => item.id === id)
-
-      if (!connection) {
-        throw new Error('API sync connection not found')
-      }
-
-      return {
-        connection: {
-          ...connection,
-          status: connection.failedRecords ? 'Degraded' : 'Connected',
-          lastSync: 'just now',
-          enabled: true,
-        },
-        history: apiSyncMock.history ?? [],
-      }
-    }
+    return httpClient.post<RetryApiSyncResponse>(`/api-sync/${encodeURIComponent(id)}/retry`)
   },
 }
