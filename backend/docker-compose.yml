@@ -1,0 +1,23 @@
+name: careaudithub
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: careaudithub-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: careaudithub
+      POSTGRES_PASSWORD: careaudithub
+      POSTGRES_DB: careaudithub
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U careaudithub -d careaudithub"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
+    name: careaudithub-postgres-data

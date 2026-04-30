@@ -1,0 +1,103 @@
+service: care-audit-hub-lambda
+frameworkVersion: "3"
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-southeast-2
+  stage: ${opt:stage, 'local'}
+  httpApi:
+    cors:
+      allowedOrigins:
+        - ${env:CORS_ORIGIN, 'http://localhost:5173'}
+        - http://localhost:3000
+        - http://localhost:3001
+        - http://localhost:5173
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+      allowedMethods:
+        - GET
+        - POST
+        - OPTIONS
+      allowCredentials: true
+  environment:
+    NODE_OPTIONS: --enable-source-maps
+    DATABASE_URL: ${env:DATABASE_URL, 'postgres://careaudithub:careaudithub@localhost:5432/careaudithub'}
+    CORS_ORIGIN: ${env:CORS_ORIGIN, 'http://localhost:5173'}
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    target: node20
+    platform: node
+    format: esm
+    outputFileExtension: .mjs
+    external:
+      - pg-native
+  serverless-offline:
+    httpPort: 3000
+    lambdaPort: 3002
+    reloadHandler: true
+
+functions:
+  dashboard:
+    handler: src/handlers/dashboard.getDashboard
+    events:
+      - httpApi:
+          method: GET
+          path: /dashboard
+  residentsList:
+    handler: src/handlers/residents.listResidents
+    events:
+      - httpApi:
+          method: GET
+          path: /residents
+  residentById:
+    handler: src/handlers/residents.getResident
+    events:
+      - httpApi:
+          method: GET
+          path: /residents/{id}
+  reportsList:
+    handler: src/handlers/reports.listReports
+    events:
+      - httpApi:
+          method: GET
+          path: /reports
+  reportById:
+    handler: src/handlers/reports.getReport
+    events:
+      - httpApi:
+          method: GET
+          path: /reports/{id}
+  validateReport:
+    handler: src/handlers/reports.validateReport
+    events:
+      - httpApi:
+          method: POST
+          path: /reports/{id}/validate
+  auditLog:
+    handler: src/handlers/auditLog.listAuditLog
+    events:
+      - httpApi:
+          method: GET
+          path: /audit-log
+  apiSync:
+    handler: src/handlers/apiSync.getApiSync
+    events:
+      - httpApi:
+          method: GET
+          path: /api-sync
+  retryApiSync:
+    handler: src/handlers/apiSync.retryApiSync
+    events:
+      - httpApi:
+          method: POST
+          path: /api-sync/{id}/retry

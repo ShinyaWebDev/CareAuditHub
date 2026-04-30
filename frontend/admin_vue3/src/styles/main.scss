@@ -1,0 +1,36 @@
+@layer vuetify-overrides {
+  html {
+    background: rgb(var(--v-theme-background));
+  }
+
+  body {
+    min-width: 320px;
+    color: rgb(var(--v-theme-on-surface));
+    font-family: var(--font-body);
+  }
+
+  code, pre, .v-code {
+    font-family: var(--font-mono);
+  }
+
+  .dashboard-card {
+    border: 1px solid rgba(var(--v-theme-outline-variant), 0.7);
+    border-radius: 8px;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .metric-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}

@@ -1,0 +1,8 @@
+node_modules/
+.serverless/
+.esbuild/
+.build/
+.env
+drizzle/
+.DS_Store
+dist/
